@@ -2,13 +2,20 @@
 
 function sendMail(dataMatrix) {
   const yesCount = dataMatrix.filter((row) => row[1][0] === "YES").length;
-  const pipeMajor = PropertiesService.getScriptProperties()
+  const recipient = PropertiesService.getScriptProperties()
     .getProperty("pipeMajor");
   const spreadsheetID = PropertiesService.getScriptProperties()
     .getProperty("spreadsheetID");
-  MailApp.sendEmail(pipeMajor,
-    "Sutherland Pipe Band confirmed attendees: " + yesCount,
-    `https://docs.google.com/spreadsheets/d/${spreadsheetID}/edit#gid=0`);
+  const spreadsheetURL = "https://docs.google.com/spreadsheets/d/${spreadsheetID}/edit#gid=0";
+  const spreadsheetName = SpreadsheetApp.openById(spreadsheetID).getName();
+  const subject = "Sutherland Pipe Band confirmed attendees: " + yesCount;
+  const body = spreadsheetName + "\n" + spreadsheetURL;
+  const htmlBody = `<a href="${spreadsheetURL}">${spreadsheetName}</a>`;
+  const options = {
+    htmlBody: htmlBody
+  };
+
+  MailApp.sendEmail(recipient, subject, body, options);
 }
 
 function getPractiveEvent() {
