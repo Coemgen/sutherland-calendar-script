@@ -6,7 +6,9 @@ function sendMail(dataMatrix) {
     .getProperty("pipeMajor");
   const spreadsheetID = PropertiesService.getScriptProperties()
     .getProperty("spreadsheetID");
-  const spreadsheetURL = "https://docs.google.com/spreadsheets/d/${spreadsheetID}/edit#gid=0";
+  const spreadsheetURL = encodeURI(
+    `https://docs.google.com/spreadsheets/d/${spreadsheetID}/edit#gid=0`
+  );
   const spreadsheetName = SpreadsheetApp.openById(spreadsheetID).getName();
   const subject = "Sutherland Pipe Band confirmed attendees: " + yesCount;
   const body = spreadsheetName + "\n" + spreadsheetURL;
