@@ -1,4 +1,4 @@
-/* global CalendarApp, SpreadsheetApp */
+/* global CalendarApp, MailApp, SpreadsheetApp */
 
 const $EVENT_UID = "1tc38to4mc6csemcnaa359u4dp@google.com";
 const $CALENDAR_ID = "kevin.griffin@lowerfallsweb.com";
@@ -27,12 +27,7 @@ function getPractiveEvent() {
   const myEvents = myCal.getEvents(startTime, endTime);
   // assuming only one practice event scheduled
   const practiceEvent = myEvents.filter(
-    (ev) => {
-      const iCalUID = ev.getId();
-      const eventID = iCalUID.match(/([a-zA-Z0-9]*)(_R[0-9]{8}T[0-9]{6})?(@google.com)/);
-      
-      return $EVENT_UID === eventID[1] + eventID[3];
-    }
+    ev => $EVENT_UID === ev.getEventSeries().getId()
   )[0];
 
   return practiceEvent;
