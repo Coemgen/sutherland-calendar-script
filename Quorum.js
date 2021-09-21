@@ -1,33 +1,38 @@
-/* global CalendarApp, MailApp, SpreadsheetApp */
-
-const $EVENT_UID = "1tc38to4mc6csemcnaa359u4dp@google.com";
-const $CALENDAR_ID = "kevin.griffin@lowerfallsweb.com";
-const $SPREADSHEET_ID = "1Zr67fnglB8l3FEKLwidsNKO_bLGq26SANeA-SMz4eII";
-const $PRACTICE_START_TIME = 17;
-const $PRACTICE_END_TIME = 19;
-const $PIPE_MAJOR = "kevin.griffin@gmail.com";
+/* global CalendarApp, MailApp, PropertiesService, SpreadsheetApp */
 
 function sendMail(dataMatrix) {
   const yesCount = dataMatrix.filter((row) => row[1][0] === "YES").length;
-  MailApp.sendEmail($PIPE_MAJOR,
+  const pipeMajor = PropertiesService.getScriptProperties()
+    .getProperty("pipeMajor");
+  const spreadsheetID = PropertiesService.getScriptProperties()
+    .getProperty("spreadsheetID");
+  MailApp.sendEmail(pipeMajor,
     "Sutherland Pipe Band confirmed attendees: " + yesCount,
-    `https://docs.google.com/spreadsheets/d/${$SPREADSHEET_ID}/edit#gid=0`);
+    `https://docs.google.com/spreadsheets/d/${spreadsheetID}/edit#gid=0`);
 }
 
 function getPractiveEvent() {
-  const myCal = CalendarApp.getCalendarById($CALENDAR_ID);
+  const calendarID = PropertiesService.getScriptProperties()
+    .getProperty("calendarID");
+  const myCal = CalendarApp.getCalendarById(calendarID);
   const tdy = new Date();
   const year = tdy.getFullYear();
   const month = tdy.getMonth();
   const date = tdy.getDate();
   const weekDay = tdy.getDay(); // 0-6
   const offset = 4 - weekDay; // number of days to or from Thursday (day 4)
-  const startTime = new Date(year, month, date + offset, $PRACTICE_START_TIME);
-  const endTime = new Date(year, month, date + offset, $PRACTICE_END_TIME);
+  const practiceStartTime = PropertiesService.getScriptProperties()
+    .getProperty("practiceStartTime");
+  const practiceEndTime = PropertiesService.getScriptProperties()
+    .getProperty("practiceEndTime");
+  const startTime = new Date(year, month, date + offset, practiceStartTime);
+  const endTime = new Date(year, month, date + offset, practiceEndTime);
   const myEvents = myCal.getEvents(startTime, endTime);
+  const event_iCalUID = PropertiesService.getScriptProperties()
+    .getProperty("event_iCalUID");
   // assuming only one practice event scheduled
   const practiceEvent = myEvents.filter(
-    ev => $EVENT_UID === ev.getEventSeries().getId()
+    ev => event_iCalUID === ev.getEventSeries().getId()
   )[0];
 
   return practiceEvent;
@@ -36,7 +41,9 @@ function getPractiveEvent() {
 // eslint-disable-next-line no-unused-vars
 function __addRosterToEvent() {
   const practiceEvent = getPractiveEvent();
-  const rosterSheet = SpreadsheetApp.openById($SPREADSHEET_ID)
+  const spreadsheetID = PropertiesService.getScriptProperties()
+    .getProperty("spreadsheetID");
+  const rosterSheet = SpreadsheetApp.openById(spreadsheetID)
     .getSheetByName("Roster");
   const lastRow = rosterSheet.getLastRow();
   const rosterSheetRange = rosterSheet.getRange(2, 1, lastRow - 1, 2);
@@ -67,7 +74,9 @@ function __addRosterToEvent() {
 // eslint-disable-next-line no-unused-vars
 function __updateSpreadsheetStatuses() {
   const practiceEvent = getPractiveEvent();
-  const rosterSheet = SpreadsheetApp.openById($SPREADSHEET_ID)
+  const spreadsheetID = PropertiesService.getScriptProperties()
+    .getProperty("spreadsheetID");
+  const rosterSheet = SpreadsheetApp.openById(spreadsheetID)
     .getSheetByName("Roster");
   const lastRow = rosterSheet.getLastRow();
   let dataMatrix = [];
