@@ -93,7 +93,7 @@ function __createPracticeEvent() {
       endTime,
       options
     )
-    .setGuestsCanInviteOthers(false);
+    .setGuestsCanModify(true);
 }
 
 /**
