@@ -86,6 +86,9 @@ function __createPracticeEvent() {
     return;
   }
 
+  // clear status column
+  rosterSheet.getRange("Roster!B2:B").clearContent();
+
   CalendarApp.getCalendarById(calendarID)
     .createEvent(
       title,
