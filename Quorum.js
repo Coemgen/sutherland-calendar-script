@@ -25,29 +25,13 @@ function getPractiveEvent() {
     .getProperty("calendarID");
   const myCal = CalendarApp.getCalendarById(calendarID);
   const tdy = new Date();
-  const year = tdy.getFullYear();
-  const month = tdy.getMonth();
-  const date = tdy.getDate();
-  const weekDay = tdy.getDay(); // 0-6
-  const offset = 4 - weekDay; // number of days to or from Thursday (day 4)
-  const practiceStartTime = PropertiesService.getScriptProperties()
-    .getProperty("practiceStartTime");
-  const practiceEndTime = PropertiesService.getScriptProperties()
-    .getProperty("practiceEndTime");
-  const startTime = new Date(year, month, date + offset, practiceStartTime);
-  const endTime = new Date(year, month, date + offset, practiceEndTime);
-  const myEvents = myCal.getEvents(startTime, endTime);
-  const event_iCalUID = PropertiesService.getScriptProperties()
-    .getProperty("event_iCalUID");
+  const dow = tdy.getDay(); // Sunday - Saturday : 0 - 6
+  const thu = new Date(tdy.setDate(tdy.getDate() + 4 - dow));
+  const myEvents = myCal.getEventsForDay(thu);
+  const title = PropertiesService.getScriptProperties()
+    .getProperty("eventTitle");
   // assuming only one practice event scheduled
-  const practiceEvent = myEvents.filter(
-    ev => {
-      const eventID = ev.getId()
-        .match(/([a-zA-Z0-9]*)(_R[0-9]{8}T[0-9]{6})?(@google.com)/);
-
-      return event_iCalUID === eventID[1] + eventID[3];
-    }
-  )[0];
+  const practiceEvent = myEvents.filter(ev => ev.getTitle() === title)[0];
 
   return practiceEvent;
 }
@@ -108,7 +92,8 @@ function __createPracticeEvent() {
       startTime,
       endTime,
       options
-    );
+    )
+    .setGuestsCanInviteOthers(false);
 }
 
 /**
