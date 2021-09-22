@@ -41,7 +41,12 @@ function getPractiveEvent() {
     .getProperty("event_iCalUID");
   // assuming only one practice event scheduled
   const practiceEvent = myEvents.filter(
-    ev => event_iCalUID === ev.getEventSeries().getId()
+    ev => {
+      const eventID = ev.getId()
+        .match(/([a-zA-Z0-9]*)(_R[0-9]{8}T[0-9]{6})?(@google.com)/);
+
+      return event_iCalUID === eventID[1] + eventID[3];
+    }
   )[0];
 
   return practiceEvent;
