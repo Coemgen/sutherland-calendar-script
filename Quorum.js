@@ -52,35 +52,63 @@ function getPractiveEvent() {
   return practiceEvent;
 }
 
+function getSetTime(time, dow) {
+  const dt = new Date();
+
+  // set practice to Thur of the current week
+  dt.setDate(dt.getDate() + 4 - dow);
+  dt.setMinutes(0);
+  dt.setSeconds(0);
+  dt.setHours(time);
+
+  return dt;
+}
+
 // eslint-disable-next-line no-unused-vars
-function __addRosterToEvent() {
-  const practiceEvent = getPractiveEvent();
+function __createPracticeEvent() {
+  const dt = new Date();
+  const dow = dt.getDay(); // Sunday - Saturday : 0 - 6
+  const startTime = getSetTime(
+    PropertiesService.getScriptProperties()
+      .getProperty("practiceStartTime"),
+    dow
+  );
+  const endTime = getSetTime(
+    PropertiesService.getScriptProperties()
+      .getProperty("practiceEndTime"),
+    dow
+  );
+  const title = PropertiesService.getScriptProperties()
+    .getProperty("eventTitle");
+  const calendarID = PropertiesService.getScriptProperties()
+    .getProperty("calendarID");
   const spreadsheetID = PropertiesService.getScriptProperties()
     .getProperty("spreadsheetID");
   const rosterSheet = SpreadsheetApp.openById(spreadsheetID)
     .getSheetByName("Roster");
-  const lastRow = rosterSheet.getLastRow();
-  const rosterSheetRange = rosterSheet.getRange(2, 1, lastRow - 1, 2);
-  const rosterArr = rosterSheetRange.getValues()
-    .map((member) => member[0]).filter((member) => member);
-  const attendeesObj = practiceEvent.getGuestList();
-  const attendeesArr = Array.from(attendeesObj)
-    .map((attendee) => attendee.getEmail());
+  const rosterStr = rosterSheet.getRange("A2:A").getValues()
+    .reduce((prev, cur) => [...prev, cur[0]], []).toString();
+  const options = {
+    description: PropertiesService.getScriptProperties()
+      .getProperty("eventDescription"),
+    location: PropertiesService.getScriptProperties()
+      .getProperty("eventLocation"),
+    guests: rosterStr,
+    sendInvites: true
+  };
 
-  // if no band practice event on calendar do nothing
-  if (practiceEvent === undefined) {
+  // don't create events after Weds of the current week
+  if (dow > 3) {
     return;
   }
 
-  // add attendees to event from roster
-  rosterArr.forEach((member) => {
-    if (attendeesArr.find((attendee) => attendee === member) === undefined) {
-      practiceEvent.addGuest(member);
-    }
-  });
-
-  // clear status column
-  rosterSheet.getRange("Roster!B2:B").clearContent();
+  CalendarApp.getCalendarById(calendarID)
+    .createEvent(
+      title,
+      startTime,
+      endTime,
+      options
+    );
 }
 
 /**
