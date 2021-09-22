@@ -1,6 +1,8 @@
+/* global ScriptApp */
 
+// eslint-disable-next-line no-unused-vars
 function setScriptTriggers() {
-  const triggers = ScriptApp.getProjectTriggers()
+  ScriptApp.getProjectTriggers()
     .forEach(trigger => ScriptApp.deleteTrigger(trigger));
 
   // Runs between 5am-6am in the timezone of the script

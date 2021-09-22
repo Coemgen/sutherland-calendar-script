@@ -79,6 +79,8 @@ function __addRosterToEvent() {
     }
   });
 
+  // clear status column
+  rosterSheet.getRange("Roster!B2:B").clearContent();
 }
 
 /**
