@@ -1,5 +1,17 @@
 /* global CalendarApp, MailApp, PropertiesService, SpreadsheetApp */
 
+function getContactsStr() {
+  const contactsSSheetId = PropertiesService.getScriptProperties()
+    .getProperty("sutherlandContactsSsID");
+  const contactsSheet = SpreadsheetApp.openById(contactsSSheetId)
+    .getSheetByName("Contact List");
+  const contactsMatrix = contactsSheet.getDataRange().getValues();
+  const contactsArr = contactsMatrix.filter(row => row[2] === "Y")
+    .map(row => row[5]);
+
+  return contactsArr.toString();
+}
+
 function sendMail(dataMatrix) {
   const yesCount = dataMatrix.filter((row) => row[1][0] === "YES").length;
   const recipient = PropertiesService.getScriptProperties()
@@ -70,8 +82,7 @@ function __createPracticeEvent() {
     .getProperty("spreadsheetID");
   const rosterSheet = SpreadsheetApp.openById(spreadsheetID)
     .getSheetByName("Roster");
-  const rosterStr = rosterSheet.getRange("A2:A").getValues()
-    .reduce((prev, cur) => [...prev, cur[0]], []).toString();
+  const rosterStr = getContactsStr();
   const options = {
     description: PropertiesService.getScriptProperties()
       .getProperty("eventDescription"),
@@ -81,13 +92,13 @@ function __createPracticeEvent() {
     sendInvites: true
   };
 
-  // don't create events after Weds of the current week
-  if (dow > 3) {
+  // don't create events after Thurs of the current week
+  if (dow > 4) {
     return;
   }
 
   // clear status column
-  rosterSheet.getRange("Roster!B2:B").clearContent();
+  rosterSheet.getRange("Roster!A2:B").clearContent();
 
   CalendarApp.getCalendarById(calendarID)
     .createEvent(
