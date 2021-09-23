@@ -3,9 +3,10 @@
 // eslint-disable-next-line no-unused-vars
 function deleteEvent() {
   const practiceEvent = getPractiveEvent();
-  const st = practiceEvent.getStartTime();
 
-  practiceEvent.deleteEvent();
+  if (practiceEvent !== undefined) {
+    practiceEvent.deleteEvent();
+  }
 }
 
 function getContactsStr() {
@@ -51,7 +52,7 @@ function getPractiveEvent() {
   const title = PropertiesService.getScriptProperties()
     .getProperty("eventTitle");
   // assuming only one practice event scheduled
-  const practiceEvent = myEvents.filter(ev => ev.getTitle() === title)[0];
+  const practiceEvent = myEvents.filter(ev => ev.getTag("event") === "practice")[0];
 
   return practiceEvent;
 }
@@ -115,8 +116,8 @@ function __createPracticeEvent() {
       endTime,
       options
     )
-    .setGuestsCanModify(true)
-    .removeAllReminders();
+    .removeAllReminders()
+    .setTag("event", "practice");
 }
 
 /**
