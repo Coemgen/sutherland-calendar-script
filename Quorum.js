@@ -130,7 +130,9 @@ function __updateSpreadsheetStatuses() {
   }
 
   // clear old values from roster sheet
-  rosterSheet.getRange(2, 1, lastRow - 1, 2).clearContent();
+  if (lastRow > 1) {
+    rosterSheet.getRange(2, 1, lastRow - 1, 2).clearContent();
+  }
 
   // get event attendees' emails and statuses
   practiceEvent.getGuestList()
