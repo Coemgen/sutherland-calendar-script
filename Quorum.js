@@ -6,7 +6,7 @@ function getPractiveEvent() {
   const myCal = CalendarApp.getCalendarById(calendarID);
   const tdy = new Date();
   const dow = tdy.getDay(); // Sunday - Saturday : 0 - 6
-  const thu = new Date(tdy.setDate(tdy.getDate() + 4 - dow));
+  const thu = new Date(tdy.setDate(tdy.getDate() + (4 - dow)));
   const myEvents = myCal.getEventsForDay(thu);
   // assuming only one practice event scheduled
   const practiceEvent = myEvents.filter(
@@ -61,7 +61,7 @@ function getSetTime(time, dow) {
   const dt = new Date();
 
   // set practice to Thursday of the current week
-  dt.setDate(dt.getDate() + 4 - dow);
+  dt.setDate(dt.getDate() + (4 - dow));
   dt.setMinutes(0);
   dt.setSeconds(0);
   dt.setHours(time);
