@@ -1,5 +1,21 @@
 /* global CalendarApp, MailApp, PropertiesService, SpreadsheetApp */
 
+function getPractiveEvent() {
+  const calendarID = PropertiesService.getScriptProperties()
+    .getProperty("calendarID");
+  const myCal = CalendarApp.getCalendarById(calendarID);
+  const tdy = new Date();
+  const dow = tdy.getDay(); // Sunday - Saturday : 0 - 6
+  const thu = new Date(tdy.setDate(tdy.getDate() + 4 - dow));
+  const myEvents = myCal.getEventsForDay(thu);
+  // assuming only one practice event scheduled
+  const practiceEvent = myEvents.filter(
+    ev => ev.getTag("event") === "practice"
+  )[0];
+
+  return practiceEvent;
+}
+
 // eslint-disable-next-line no-unused-vars
 function deleteEvent() {
   const practiceEvent = getPractiveEvent();
@@ -41,22 +57,6 @@ function sendMail(dataMatrix) {
   MailApp.sendEmail(recipient, subject, body, options);
 }
 
-function getPractiveEvent() {
-  const calendarID = PropertiesService.getScriptProperties()
-    .getProperty("calendarID");
-  const myCal = CalendarApp.getCalendarById(calendarID);
-  const tdy = new Date();
-  const dow = tdy.getDay(); // Sunday - Saturday : 0 - 6
-  const thu = new Date(tdy.setDate(tdy.getDate() + 4 - dow));
-  const myEvents = myCal.getEventsForDay(thu);
-  const title = PropertiesService.getScriptProperties()
-    .getProperty("eventTitle");
-  // assuming only one practice event scheduled
-  const practiceEvent = myEvents.filter(ev => ev.getTag("event") === "practice")[0];
-
-  return practiceEvent;
-}
-
 function getSetTime(time, dow) {
   const dt = new Date();
 
@@ -75,12 +75,12 @@ function __createPracticeEvent() {
   const dow = dt.getDay(); // Sunday - Saturday : 0 - 6
   const startTime = getSetTime(
     PropertiesService.getScriptProperties()
-      .getProperty("practiceStartTime"),
+    .getProperty("practiceStartTime"),
     dow
   );
   const endTime = getSetTime(
     PropertiesService.getScriptProperties()
-      .getProperty("practiceEndTime"),
+    .getProperty("practiceEndTime"),
     dow
   );
   const title = PropertiesService.getScriptProperties()
