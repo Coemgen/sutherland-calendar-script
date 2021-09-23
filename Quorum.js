@@ -1,5 +1,13 @@
 /* global CalendarApp, MailApp, PropertiesService, SpreadsheetApp */
 
+// eslint-disable-next-line no-unused-vars
+function deleteEvent() {
+  const practiceEvent = getPractiveEvent();
+  const st = practiceEvent.getStartTime();
+
+  practiceEvent.deleteEvent();
+}
+
 function getContactsStr() {
   const contactsSSheetId = PropertiesService.getScriptProperties()
     .getProperty("sutherlandContactsSsID");
@@ -51,7 +59,7 @@ function getPractiveEvent() {
 function getSetTime(time, dow) {
   const dt = new Date();
 
-  // set practice to Thur of the current week
+  // set practice to Thursday of the current week
   dt.setDate(dt.getDate() + 4 - dow);
   dt.setMinutes(0);
   dt.setSeconds(0);
@@ -92,7 +100,7 @@ function __createPracticeEvent() {
     sendInvites: true
   };
 
-  // don't create events after Thurs of the current week
+  // don't create events after Thursday of the current week
   if (dow > 4) {
     return;
   }
@@ -107,7 +115,8 @@ function __createPracticeEvent() {
       endTime,
       options
     )
-    .setGuestsCanModify(true);
+    .setGuestsCanModify(true)
+    .removeAllReminders();
 }
 
 /**
@@ -124,14 +133,14 @@ function __updateSpreadsheetStatuses() {
   const lastRow = rosterSheet.getLastRow();
   let dataMatrix = [];
 
-  // if no band practice event on calendar do nothing
-  if (practiceEvent === undefined) {
-    return;
-  }
-
   // clear old values from roster sheet
   if (lastRow > 1) {
     rosterSheet.getRange(2, 1, lastRow - 1, 2).clearContent();
+  }
+
+  // if no band practice event on calendar do nothing
+  if (practiceEvent === undefined) {
+    return;
   }
 
   // get event attendees' emails and statuses
