@@ -6,7 +6,7 @@ function setScriptTriggers() {
     .forEach(trigger => ScriptApp.deleteTrigger(trigger));
 
   // Runs between 6am-7am in the timezone of the script
-  ScriptApp.newTrigger("__createPracticeEvent")
+  ScriptApp.newTrigger("_createPracticeEvent")
     .timeBased()
     .onWeekDay(ScriptApp.WeekDay.MONDAY)
     .atHour(6)
@@ -14,7 +14,7 @@ function setScriptTriggers() {
     .create();
 
   // Runs between 5pm-6pm in the timezone of the script
-  ScriptApp.newTrigger("__updateSpreadsheetStatuses")
+  ScriptApp.newTrigger("_updateSpreadsheetStatuses")
     .timeBased()
     .onWeekDay(ScriptApp.WeekDay.THURSDAY)
     .atHour(17)
