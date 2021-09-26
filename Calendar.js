@@ -33,7 +33,7 @@ const _Calendar = (
       const myEvents = myCal.getEventsForDay(practiceDate);
       // assuming only one practice event scheduled
       const practiceEvent = myEvents.filter(
-        ev => ev.getTag("event") === eventType
+        ev => ev.getTag("eventType") === eventType
       )[0];
 
       return practiceEvent;
@@ -59,6 +59,14 @@ const _Calendar = (
       const description = props.eventDescription;
       const location = props.eventLocation;
       const calendarID = props.calendarID;
+      const myCal = CalendarApp.getCalendarById(calendarID);
+      let myEvent = {};
+      const placeholderEvents = myCal.getEvents(startTime, endTime);
+      // assuming only one practice event scheduled
+      const placeholderEvent = placeholderEvents.filter(
+        event => event.getTitle() === "Sutherland rehearsal"
+          && event.getTag("eventType") !== eventType
+      )[0];
       const spreadsheetID = props.spreadsheetID;
       const rosterSheet = SpreadsheetApp.openById(spreadsheetID)
         .getSheetByName("Roster");
@@ -75,18 +83,24 @@ const _Calendar = (
         return;
       }
 
+      // don't create event unless there's a placeholder event on calendar
+      if (placeholderEvent === undefined) {
+        return;
+      } else {
+        placeholderEvent.deleteEvent();
+      }
+
       // clear status column
       rosterSheet.getRange("Roster!A2:B").clearContent();
 
-      CalendarApp.getCalendarById(calendarID)
-        .createEvent(
-          title,
-          startTime,
-          endTime,
-          options
-        )
-        .removeAllReminders()
-        .setTag("event", eventType);
+      myEvent = myCal.createEvent(
+        title,
+        startTime,
+        endTime,
+        options
+      );
+      myEvent.removeAllReminders();
+      myEvent.setTag("eventType", eventType);
     }
 
     return Object.freeze({
