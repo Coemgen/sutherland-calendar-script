@@ -2,22 +2,8 @@
 
 // eslint-disable-next-line no-unused-vars
 const _Calendar = (
-  function (CalendarApp, SpreadsheetApp) {
+  function () {
     "use strict";
-
-    function getSetTime(time, dow) {
-      const practiceDow = PropertiesService.getScriptProperties()
-        .getProperty("practiceDow");
-      const dt = new Date();
-
-      // set practice to practiceDow of the current week
-      dt.setDate(dt.getDate() + (practiceDow - dow));
-      dt.setMinutes(0);
-      dt.setSeconds(0);
-      dt.setHours(time);
-
-      return dt;
-    }
 
     function getEvent(eventType) {
       const props = PropertiesService.getScriptProperties()
@@ -48,11 +34,11 @@ const _Calendar = (
       const practiceEndTime = props.practiceEndTime;
       const dt = new Date();
       const dow = dt.getDay(); // Sunday - Saturday : 0 - 6
-      const startTime = getSetTime(
+      const startTime = _Utils.getPracticeDateObject(
         practiceStartTime,
         dow
       );
-      const endTime = getSetTime(
+      const endTime = _Utils.getPracticeDateObject(
         practiceEndTime,
         dow
       );
@@ -90,7 +76,7 @@ const _Calendar = (
         placeholderEvent.deleteEvent();
       }
 
-      // clear status column
+      // clear statuses
       rosterSheet.getRange("Roster!A2:B").clearContent();
 
       myEvent = myCal.createEvent(
@@ -107,4 +93,5 @@ const _Calendar = (
       addEvent,
       getEvent
     });
-  })(CalendarApp, SpreadsheetApp);
+  }
+)();
