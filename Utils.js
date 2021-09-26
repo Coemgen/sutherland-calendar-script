@@ -1,4 +1,4 @@
-/* PropertiesService, MailApp, SpreadsheetApp */
+/* global PropertiesService, MailApp, SpreadsheetApp */
 
 // eslint-disable-next-line no-unused-vars
 const _Utils = (

@@ -25,6 +25,7 @@ const _Calendar = (
       return practiceEvent;
     }
 
+    // eslint-disable-next-line max-statements
     function addEvent(eventType) {
       const props = PropertiesService.getScriptProperties()
         .getProperties();
@@ -51,7 +52,7 @@ const _Calendar = (
       // assuming only one practice event scheduled
       const placeholderEvent = placeholderEvents.filter(
         event => event.getTitle() === "Sutherland rehearsal"
-          && event.getTag("eventType") !== eventType
+        && event.getTag("eventType") !== eventType
       )[0];
       const spreadsheetID = props.spreadsheetID;
       const rosterSheet = SpreadsheetApp.openById(spreadsheetID)
