@@ -1,11 +1,11 @@
-/* global CalendarApp, PropertiesService, SpreadsheetApp, _Utils */
+/*global CalendarApp, PropertiesService, SpreadsheetApp, Utils */
 
 // eslint-disable-next-line no-unused-vars
-const _Calendar = (
+const Calendar = (
   function () {
     "use strict";
 
-    function getEvent(eventType) {
+    function getActiveEvent(eventType) {
       const props = PropertiesService.getScriptProperties()
         .getProperties();
       const practiceDow = props.practiceDow;
@@ -19,10 +19,19 @@ const _Calendar = (
       const myEvents = myCal.getEventsForDay(practiceDate);
       // assuming only one practice event scheduled
       const practiceEvent = myEvents.filter(
-        ev => ev.getTag("eventType") === eventType
+        (ev) => ev.getTag("eventType") === eventType
       )[0];
 
       return practiceEvent;
+    }
+
+    function _getPlaceholderEvent(myCal, startTime, endTime, eventType) {
+      const placeholderEvents = myCal.getEvents(startTime, endTime);
+      // assuming only one practice event scheduled
+      return placeholderEvents.filter(
+        (event) => event.getTitle() === "Sutherland rehearsal"
+        && event.getTag("eventType") !== eventType
+      )[0];
     }
 
     // eslint-disable-next-line max-statements
@@ -35,11 +44,11 @@ const _Calendar = (
       const practiceEndTime = props.practiceEndTime;
       const dt = new Date();
       const dow = dt.getDay(); // Sunday - Saturday : 0 - 6
-      const startTime = _Utils.getPracticeDateObject(
+      const startTime = Utils.getPracticeDateObject(
         practiceStartTime,
         dow
       );
-      const endTime = _Utils.getPracticeDateObject(
+      const endTime = Utils.getPracticeDateObject(
         practiceEndTime,
         dow
       );
@@ -47,21 +56,18 @@ const _Calendar = (
       const location = props.eventLocation;
       const calendarID = props.calendarID;
       const myCal = CalendarApp.getCalendarById(calendarID);
-      let myEvent = {};
-      const placeholderEvents = myCal.getEvents(startTime, endTime);
-      // assuming only one practice event scheduled
-      const placeholderEvent = placeholderEvents.filter(
-        event => event.getTitle() === "Sutherland rehearsal"
-        && event.getTag("eventType") !== eventType
-      )[0];
+      let newEvent = {};
+      const placeholderEvent = _getPlaceholderEvent(
+        myCal, startTime, endTime, eventType
+      );
       const spreadsheetID = props.spreadsheetID;
       const rosterSheet = SpreadsheetApp.openById(spreadsheetID)
         .getSheetByName("Roster");
-      const rosterStr = _Utils.getContactsStr();
+      const rosterStr = Utils.getContactsStr();
       const options = {
-        description: description,
-        location: location,
+        description,
         guests: rosterStr,
+        location,
         sendInvites: true
       };
 
@@ -73,26 +79,25 @@ const _Calendar = (
       // don't create event unless there's a placeholder event on calendar
       if (placeholderEvent === undefined) {
         return;
-      } else {
-        placeholderEvent.deleteEvent();
       }
+
+      placeholderEvent.deleteEvent();
 
       // clear statuses
       rosterSheet.getRange("Roster!A2:B").clearContent();
 
-      myEvent = myCal.createEvent(
+      newEvent = myCal.createEvent(
         title,
         startTime,
         endTime,
         options
       );
-      myEvent.removeAllReminders();
-      myEvent.setTag("eventType", eventType);
+      newEvent.removeAllReminders();
+      newEvent.setTag("eventType", eventType);
     }
 
     return Object.freeze({
       addEvent,
-      getEvent
+      getEvent: getActiveEvent
     });
-  }
-)();
+  }());

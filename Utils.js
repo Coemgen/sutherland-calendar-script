@@ -1,7 +1,7 @@
-/* global PropertiesService, MailApp, SpreadsheetApp */
+/*global PropertiesService, MailApp, SpreadsheetApp */
 
 // eslint-disable-next-line no-unused-vars
-const _Utils = (
+const Utils = (
   function () {
     "use strict";
 
@@ -25,8 +25,8 @@ const _Utils = (
       const contactsSheet = SpreadsheetApp.openById(contactsSSheetId)
         .getSheetByName("Contact List");
       const contactsMatrix = contactsSheet.getDataRange().getValues();
-      const contactsArr = contactsMatrix.filter(row => row[2] === "Y")
-        .map(row => row[5]);
+      const contactsArr = contactsMatrix.filter((row) => row[2] === "Y")
+        .map((row) => row[5]);
 
       return contactsArr.toString();
     }
@@ -45,16 +45,15 @@ const _Utils = (
       const body = spreadsheetName + "\n" + spreadsheetURL;
       const htmlBody = `<a href="${spreadsheetURL}">${spreadsheetName}</a>`;
       const options = {
-        htmlBody: htmlBody
+        htmlBody
       };
 
       MailApp.sendEmail(recipient, subject, body, options);
     }
 
     return Object.freeze({
-      getPracticeDateObject,
       getContactsStr,
+      getPracticeDateObject,
       sendMail
     });
-  }
-)();
+  }());
