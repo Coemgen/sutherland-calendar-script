@@ -12,7 +12,7 @@ const Calendar = (
       const calendarID = props.calendarID;
       const myCal = CalendarApp.getCalendarById(calendarID);
       const tdy = new Date();
-      const dow = tdy.getDay(); // Sunday - Saturday : 0 - 6
+      const dow = tdy.getDay();  // Sunday - Saturday : 0 - 6
       const practiceDate = new Date(
         tdy.setDate(tdy.getDate() + (practiceDow - dow))
       );
@@ -30,7 +30,7 @@ const Calendar = (
       // assuming only one practice event scheduled
       return placeholderEvents.filter(
         (event) => event.getTitle() === "Sutherland rehearsal"
-        && event.getTag("eventType") !== eventType
+          && event.getTag("eventType") !== eventType
       )[0];
     }
 
@@ -43,7 +43,7 @@ const Calendar = (
       const practiceStartTime = props.practiceStartTime;
       const practiceEndTime = props.practiceEndTime;
       const dt = new Date();
-      const dow = dt.getDay(); // Sunday - Saturday : 0 - 6
+      const dow = dt.getDay();  // Sunday - Saturday : 0 - 6
       const startTime = Utils.getPracticeDateObject(
         practiceStartTime,
         dow
@@ -77,7 +77,7 @@ const Calendar = (
       }
 
       // don't create event unless there's a placeholder event on calendar
-      if (placeholderEvent === undefined) {
+      if (placeholderEvent == undefined) {  // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Equality
         return;
       }
 

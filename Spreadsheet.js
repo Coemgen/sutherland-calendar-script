@@ -19,7 +19,7 @@ const Spreadsheet = (function () {
     }
 
     // if no band practice event on calendar do nothing
-    if (practiceEvent === undefined) {
+    if (practiceEvent == undefined) {  // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Equality
       return;
     }
 

@@ -16,3 +16,8 @@ function updateSpreadsheetStatuses() {
 //     practiceEvent.deleteEvent();
 //   }
 // }
+
+// function removeGuest() {
+//   Calendar.getEvent("practice")
+//   .removeGuest("coemgen.griffin@verizon.net");
+// }
