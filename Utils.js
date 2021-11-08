@@ -35,7 +35,7 @@ const Utils = (
       const yesCount = dataMatrix.filter((row) => row[1][0] === "YES").length;
       const props = PropertiesService.getScriptProperties()
         .getProperties();
-      const recipient = props.pipeMajor;
+      const recipient = props.pipeMajor + "," + props.drumSergeant;
       const spreadsheetID = props.spreadsheetID;
       const spreadsheetURL = encodeURI(
         `https://docs.google.com/spreadsheets/d/${spreadsheetID}/edit#gid=0`
