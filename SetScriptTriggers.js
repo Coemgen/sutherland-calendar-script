@@ -10,7 +10,7 @@ function setScriptTriggers() {
     .timeBased()
     .onWeekDay(ScriptApp.WeekDay.SUNDAY)
     .atHour(12)
-    .everyWeeks(1)  // Frequency is required if you are using atHour() or nearMinute()
+    .everyWeeks(1) // Frequency is required if you are using atHour() or nearMinute()
     .create();
 
   // Runs between 5pm-6pm in the timezone of the script
@@ -18,6 +18,6 @@ function setScriptTriggers() {
     .timeBased()
     .onWeekDay(ScriptApp.WeekDay.WEDNESDAY)
     .atHour(21)
-    .everyWeeks(1)  // Frequency is required if you are using atHour() or nearMinute()
+    .everyWeeks(1) // Frequency is required if you are using atHour() or nearMinute()
     .create();
 }
