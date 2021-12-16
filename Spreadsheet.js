@@ -1,4 +1,4 @@
-/*global PropertiesService, SpreadsheetApp, Calendar, Utils */
+/*global PropertiesService, SpreadsheetApp, Calendar, Utils*/
 
 // eslint-disable-next-line no-unused-vars
 const Spreadsheet = (function () {
@@ -19,7 +19,7 @@ const Spreadsheet = (function () {
     }
 
     // if no band practice event on calendar do nothing
-    if (practiceEvent == undefined) {  // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Equality
+    if (practiceEvent == undefined) { // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Equality
       return;
     }
 
